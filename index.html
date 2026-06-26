@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>April 23 2026 Tornado Outbreak — ATMS Satellite Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ──────────────────────────────────────────────────── */
+:root {
+  --bg-void:      #060910;
+  --bg-deep:      #0a0e1a;
+  --bg-panel:     #111827;
+  --bg-card:      #1a2235;
+  --bg-highlight: #1e2d45;
+
+  --cyan:         #00d4ff;
+  --cyan-dim:     #0099bb;
+  --cyan-glow:    rgba(0, 212, 255, 0.15);
+  --amber:        #f59e0b;
+  --amber-dim:    rgba(245, 158, 11, 0.2);
+  --red:          #ef4444;
+  --red-dim:      rgba(239, 68, 68, 0.2);
+  --green:        #10b981;
+
+  --text-primary:   #f0f4f8;
+  --text-secondary: #94a3b8;
+  --text-muted:     #4b5563;
+  --border:         rgba(255,255,255,0.07);
+  --border-accent:  rgba(0, 212, 255, 0.25);
+
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body:    'Inter', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+
+  --radius:   8px;
+  --radius-lg: 14px;
+}
+
+/* ─── RESET ───────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ─── UTILITY ─────────────────────────────────────────────────── */
+.mono   { font-family: var(--font-mono); }
+.amber  { color: var(--amber); }
+.cyan   { color: var(--cyan); }
+.red    { color: var(--red); }
+.green  { color: var(--green); }
+.muted  { color: var(--text-secondary); }
+.tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid;
+}
+.tag-cyan   { color: var(--cyan);  border-color: var(--cyan-dim);  background: var(--cyan-glow); }
+.tag-amber  { color: var(--amber); border-color: var(--amber);     background: var(--amber-dim); }
+.tag-red    { color: var(--red);   border-color: var(--red);       background: var(--red-dim); }
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 12px;
+}
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 60px 0;
+}
+
+/* ─── LAYOUT ──────────────────────────────────────────────────── */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+.section   { padding: 80px 0; }
+
+/* ─── NAV ─────────────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(6, 9, 16, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  height: 60px;
+  display: flex; align-items: center;
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%;
+}
+.nav-brand {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--cyan);
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  display: flex; align-items: center; gap: 8px;
+}
+.nav-brand::before {
+  content: '';
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+.nav-links {
+  display: flex; gap: 32px; list-style: none;
+}
+.nav-links a {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--cyan); }
+
+/* ─── HERO ────────────────────────────────────────────────────── */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center;
+  position: relative;
+  padding: 100px 0 80px;
+  overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 50%, rgba(0,212,255,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 30%, rgba(239,68,68,0.04) 0%, transparent 60%),
+    linear-gradient(180deg, var(--bg-void) 0%, var(--bg-deep) 100%);
+}
+/* Scanline texture */
+.hero-bg::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 2px,
+    rgba(0,0,0,0.15) 2px,
+    rgba(0,0,0,0.15) 3px
+  );
+  pointer-events: none;
+}
+.hero-content { position: relative; z-index: 1; }
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 20px;
+  display: flex; align-items: center; gap: 12px;
+}
+.hero-eyebrow::before {
+  content: '';
+  width: 40px; height: 1px;
+  background: var(--cyan);
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 24px;
+}
+.hero-title .highlight {
+  background: linear-gradient(135deg, var(--cyan) 0%, #7dd3fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin-bottom: 40px;
+  line-height: 1.7;
+}
+
+/* Threat bar — the signature element */
+.threat-bar {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-bottom: 48px;
+  max-width: 720px;
+}
+.threat-bar-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+.threat-timeline {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: relative;
+  height: 48px;
+}
+.threat-segment {
+  height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 500;
+  transition: all 0.3s;
+  position: relative;
+  cursor: default;
+  flex: 1;
+}
+.threat-segment:first-child { border-radius: 6px 0 0 6px; }
+.threat-segment:last-child  { border-radius: 0 6px 6px 0; }
+.threat-segment.low    { background: rgba(16,185,129,0.2); color: var(--green); }
+.threat-segment.mod    { background: rgba(245,158,11,0.2); color: var(--amber); }
+.threat-segment.high   { background: rgba(239,68,68,0.25); color: #f87171; }
+.threat-segment.extreme{ background: rgba(239,68,68,0.5);  color: var(--red); }
+.threat-segment-label  { writing-mode: horizontal-tb; text-align: center; padding: 0 4px; }
+.threat-now-marker {
+  position: absolute;
+  top: -20px;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--cyan);
+  white-space: nowrap;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.threat-now-marker::after {
+  content: '';
+  width: 1px; height: 56px;
+  background: var(--cyan);
+  margin-top: 2px;
+}
+.threat-values {
+  display: flex; gap: 28px; margin-top: 14px;
+  flex-wrap: wrap;
+}
+.threat-value {
+  display: flex; flex-direction: column; gap: 2px;
+}
+.threat-value-num {
+  font-family: var(--font-mono);
+  font-size: 1.3rem;
+  font-weight: 500;
+}
+.threat-value-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.hero-cta {
+  display: flex; gap: 16px; flex-wrap: wrap;
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 24px;
+  border-radius: var(--radius);
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+.btn-primary {
+  background: var(--cyan);
+  color: var(--bg-void);
+}
+.btn-primary:hover { background: #33ddff; transform: translateY(-1px); }
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
+
+/* ─── EVENT CONTEXT ───────────────────────────────────────────── */
+.event-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-top: 40px;
+}
+.event-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  transition: border-color 0.2s;
+}
+.event-card:hover { border-color: var(--border-accent); }
+.event-card-icon {
+  font-size: 1.6rem;
+  margin-bottom: 12px;
+}
+.event-card-num {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.event-card-label {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+.event-card-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+  font-family: var(--font-mono);
+}
+
+/* ─── SATELLITE PASS ──────────────────────────────────────────── */
+.pass-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 40px;
+  align-items: start;
+  margin-top: 40px;
+}
+.pass-map-container {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+}
+.pass-map-container img {
+  width: 100%;
+  display: block;
+}
+.pass-map-overlay {
+  position: absolute;
+  top: 12px; left: 12px;
+  background: rgba(10,14,26,0.85);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius);
+  padding: 8px 12px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--cyan);
+}
+.pass-info { display: flex; flex-direction: column; gap: 16px; }
+.pass-stat {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+}
+.pass-stat-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.pass-stat-value {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.pass-stat-sub {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+.pipeline-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: 40px;
+}
+.pipeline-step {
+  display: flex;
+  gap: 20px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+}
+.pipeline-step:last-child { border-bottom: none; }
+.pipeline-step-num {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--cyan);
+  min-width: 32px;
+  padding-top: 2px;
+}
+.pipeline-step-title {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.pipeline-step-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.pipeline-step-tag { margin-top: 8px; }
+
+/* ─── RETRIEVAL VIEWER ────────────────────────────────────────── */
+.viewer-container {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-top: 40px;
+}
+.viewer-controls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.viewer-tab-group {
+  display: flex;
+  background: var(--bg-deep);
+  border-radius: 6px;
+  padding: 3px;
+  gap: 2px;
+}
+.viewer-tab {
+  padding: 7px 16px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  transition: all 0.15s;
+  letter-spacing: 0.05em;
+}
+.viewer-tab.active {
+  background: var(--bg-card);
+  color: var(--cyan);
+}
+.viewer-tab:hover:not(.active) { color: var(--text-primary); }
+
+.level-slider-wrap {
+  display: flex; align-items: center; gap: 12px; flex: 1; min-width: 200px;
+}
+.level-slider-wrap label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.level-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  outline: none;
+}
+.level-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--cyan);
+  cursor: pointer;
+  box-shadow: 0 0 6px var(--cyan);
+}
+.level-display {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--cyan);
+  min-width: 60px;
+  text-align: right;
+}
+.viewer-map-area {
+  position: relative;
+  background: var(--bg-deep);
+  min-height: 400px;
+  display: flex; align-items: center; justify-content: center;
+}
+.viewer-map-area img {
+  width: 100%;
+  max-height: 600px;
+  object-fit: contain;
+  display: block;
+}
+.viewer-map-placeholder {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 12px; color: var(--text-muted);
+  font-family: var(--font-mono); font-size: 0.8rem;
+}
+.viewer-map-placeholder .icon { font-size: 2rem; }
+.viewer-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 24px;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* ─── STABILITY INDICES ───────────────────────────────────────── */
+.indices-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 40px;
+}
+.index-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.index-card:hover {
+  border-color: var(--border-accent);
+  transform: translateY(-2px);
+}
+.index-card.active { border-color: var(--cyan); }
+.index-card-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.index-card-name {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.index-card-value {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 500;
+}
+.index-card-img {
+  width: 100%;
+  aspect-ratio: 1.4/1;
+  object-fit: cover;
+  display: block;
+  background: var(--bg-deep);
+}
+.index-card-footer {
+  padding: 10px 16px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* Full index viewer */
+.index-viewer {
+  margin-top: 24px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: none;
+}
+.index-viewer.visible { display: block; }
+.index-viewer-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.index-viewer-title {
+  font-family: var(--font-display);
+  font-size: 1rem; font-weight: 600;
+}
+.index-viewer img {
+  width: 100%; display: block;
+}
+.index-viewer-info {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: var(--border);
+  border-top: 1px solid var(--border);
+}
+.index-info-cell {
+  padding: 14px 20px;
+  background: var(--bg-panel);
+}
+.index-info-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.index-info-value {
+  font-family: var(--font-display);
+  font-size: 0.95rem; font-weight: 600;
+}
+
+/* ─── ALERT PANEL ─────────────────────────────────────────────── */
+.alert-section {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  margin-top: 40px;
+}
+.alert-header {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 28px;
+}
+.alert-icon {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--red-dim);
+  border: 1px solid var(--red);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  animation: alert-pulse 2s infinite;
+}
+@keyframes alert-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
+  50%       { box-shadow: 0 0 0 8px rgba(239,68,68,0); }
+}
+.alert-thresholds {
+  display: flex; flex-direction: column; gap: 12px;
+}
+.threshold-row {
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+}
+.threshold-index {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  min-width: 50px;
+}
+.threshold-bar-wrap {
+  flex: 1; display: flex; flex-direction: column; gap: 4px;
+}
+.threshold-bar-bg {
+  height: 6px; background: var(--border);
+  border-radius: 3px; overflow: hidden;
+}
+.threshold-bar-fill {
+  height: 100%; border-radius: 3px;
+  transition: width 1s ease;
+}
+.threshold-labels {
+  display: flex; justify-content: space-between;
+  font-family: var(--font-mono); font-size: 0.6rem;
+  color: var(--text-muted);
+}
+.threshold-status {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  min-width: 80px;
+  text-align: right;
+}
+
+/* ─── FOOTER ──────────────────────────────────────────────────── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 40px 0;
+  margin-top: 80px;
+}
+.footer-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px;
+}
+.footer-brand {
+  font-family: var(--font-display);
+  font-size: 0.85rem; font-weight: 600;
+  color: var(--cyan);
+}
+.footer-meta {
+  font-family: var(--font-mono);
+  font-size: 0.72rem; color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ─── SCROLL REVEAL ───────────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── RESPONSIVE ──────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .event-grid { grid-template-columns: 1fr 1fr; }
+  .indices-grid { grid-template-columns: 1fr 1fr; }
+  .pass-layout { grid-template-columns: 1fr; }
+  .index-viewer-info { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .container { padding: 0 16px; }
+  .event-grid { grid-template-columns: 1fr; }
+  .indices-grid { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  .hero-title { font-size: 2rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ─────────────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-brand">CESSRST · ATMS Case Study</a>
+    <ul class="nav-links">
+      <li><a href="#event">Event</a></li>
+      <li><a href="#pipeline">Pipeline</a></li>
+      <li><a href="#retrieval">Retrieval</a></li>
+      <li><a href="#indices">Indices</a></li>
+      <li><a href="#alert">Alert</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ── HERO ────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="container hero-content">
+    <div class="hero-eyebrow">NOAA-20 ATMS · April 23 2026</div>
+    <h1 class="hero-title">
+      Satellite detected<br>
+      <span class="highlight">dangerous instability</span><br>
+      hours before impact
+    </h1>
+    <p class="hero-subtitle">
+      A microwave sounding retrieval pipeline processed N20 ATMS brightness temperatures
+      from the 19:16 UTC ascending pass over the Central US — revealing the atmospheric
+      conditions that would produce an EF-4 tornado near Enid, Oklahoma that evening.
+    </p>
+
+    <!-- THREAT BAR — signature element -->
+    <div class="threat-bar">
+      <div class="threat-bar-label">Atmospheric Threat Timeline · April 23 2026 UTC</div>
+      <div class="threat-timeline" id="threatTimeline">
+        <div class="threat-segment low"    style="flex:2"><span class="threat-segment-label">00–06Z<br>STABLE</span></div>
+        <div class="threat-segment low"    style="flex:2"><span class="threat-segment-label">06–10Z<br>STABLE</span></div>
+        <div class="threat-segment mod"    style="flex:2"><span class="threat-segment-label">10–14Z<br>BUILDING</span></div>
+        <div class="threat-segment high"   style="flex:2" id="passSegment">
+          <div class="threat-now-marker">◀ N20 PASS<br>19:16Z</div>
+          <span class="threat-segment-label">14–20Z<br>HIGH</span>
+        </div>
+        <div class="threat-segment extreme" style="flex:2"><span class="threat-segment-label">20Z+<br>OUTBREAK</span></div>
+      </div>
+      <div class="threat-values">
+        <div class="threat-value">
+          <span class="threat-value-num amber mono">22.4°</span>
+          <span class="threat-value-label">K-Index mean</span>
+        </div>
+        <div class="threat-value">
+          <span class="threat-value-num red mono">492</span>
+          <span class="threat-value-label">CAPE J/kg mean</span>
+        </div>
+        <div class="threat-value">
+          <span class="threat-value-num amber mono">46.4°</span>
+          <span class="threat-value-label">Total-Totals mean</span>
+        </div>
+        <div class="threat-value">
+          <span class="threat-value-num cyan mono">20.4</span>
+          <span class="threat-value-label">TPW mm mean</span>
+        </div>
+        <div class="threat-value">
+          <span class="threat-value-num green mono">10,680</span>
+          <span class="threat-value-label">FOVs processed</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-cta">
+      <a href="#retrieval" class="btn btn-primary">↓ Explore Retrievals</a>
+      <a href="#indices" class="btn btn-ghost">View Stability Indices</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── EVENT CONTEXT ────────────────────────────────────────────── -->
+<section class="section" id="event">
+  <div class="container">
+    <p class="section-label">01 · Event Overview</p>
+    <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:700;margin-bottom:12px;">
+      April 23–28 2026 Tornado Outbreak
+    </h2>
+    <p class="muted" style="max-width:640px;line-height:1.7;">
+      A multi-day severe weather outbreak produced 101 confirmed tornadoes across the
+      Central US, with the initial EF-4 near Enid, Oklahoma reaching 180 mph winds.
+      NOAA-20 captured the pre-storm environment at 19:16 UTC — approximately 4 hours
+      before the most violent activity began.
+    </p>
+
+    <div class="event-grid reveal">
+      <div class="event-card">
+        <div class="event-card-icon">🌪</div>
+        <div class="event-card-num red">EF-4</div>
+        <div class="event-card-label">Maximum tornado intensity</div>
+        <div class="event-card-sub">Near Enid, OK · ~23:00 UTC Apr 23</div>
+      </div>
+      <div class="event-card">
+        <div class="event-card-icon">💨</div>
+        <div class="event-card-num amber">180 mph</div>
+        <div class="event-card-label">Peak estimated wind speed</div>
+        <div class="event-card-sub">Strongest tornado of the outbreak</div>
+      </div>
+      <div class="event-card">
+        <div class="event-card-icon">⚡</div>
+        <div class="event-card-num cyan">101</div>
+        <div class="event-card-label">Confirmed tornadoes Apr 23–28</div>
+        <div class="event-card-sub">Texas to Minnesota</div>
+      </div>
+      <div class="event-card">
+        <div class="event-card-icon">📡</div>
+        <div class="event-card-num">19:16 UTC</div>
+        <div class="event-card-label">NOAA-20 ascending pass time</div>
+        <div class="event-card-sub">10,680 FOVs over target region</div>
+      </div>
+      <div class="event-card">
+        <div class="event-card-icon">🌡</div>
+        <div class="event-card-num amber">&gt;1600</div>
+        <div class="event-card-label">Max CAPE detected (J/kg)</div>
+        <div class="event-card-sub">Warm sector — Kansas/Oklahoma</div>
+      </div>
+      <div class="event-card">
+        <div class="event-card-icon">⏱</div>
+        <div class="event-card-num green">~4 hrs</div>
+        <div class="event-card-label">Lead time before EF-4</div>
+        <div class="event-card-sub">Satellite pass to tornado initiation</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PIPELINE ──────────────────────────────────────────────────── -->
+<section class="section" id="pipeline" style="background:var(--bg-deep);">
+  <div class="container">
+    <p class="section-label">02 · Retrieval Pipeline</p>
+    <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:700;margin-bottom:12px;">
+      From raw brightness temperatures to stability indices
+    </h2>
+    <p class="muted" style="max-width:640px;line-height:1.7;margin-bottom:8px;">
+      The pipeline processes NOAA NODD BUFR files in near-real-time, ingesting
+      22-channel ATMS microwave brightness temperatures and producing gridded
+      atmospheric profiles and instability indices within minutes of data availability.
+    </p>
+
+    <div class="pass-layout reveal">
+      <div>
+        <div class="pipeline-steps">
+          <div class="pipeline-step">
+            <div class="pipeline-step-num">01</div>
+            <div>
+              <div class="pipeline-step-title">BUFR Ingestion from NOAA NODD</div>
+              <div class="pipeline-step-desc">
+                Paginated S3 listing downloads all ~2,700 BUFR granule files for the
+                target date. Each file covers ~18 seconds of observation, parsed in
+                parallel to extract lat/lon, zenith angle, and 22-channel antenna
+                brightness temperatures.
+              </div>
+              <div class="pipeline-step-tag">
+                <span class="tag tag-cyan">2,700 files · 290 MB</span>
+              </div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num">02</div>
+            <div>
+              <div class="pipeline-step-title">ERA5 Surface Field Interpolation</div>
+              <div class="pipeline-step-desc">
+                ERA5 reanalysis surface pressure and land-sea mask are interpolated
+                bilinearly to each satellite FOV position and linearly in time using
+                the exact observation timestamp parsed from each BUFR filename.
+              </div>
+              <div class="pipeline-step-tag">
+                <span class="tag tag-cyan">Hourly · 0.25° ERA5</span>
+              </div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num">03</div>
+            <div>
+              <div class="pipeline-step-title">MLP Temperature &amp; Water Vapor Retrieval</div>
+              <div class="pipeline-step-desc">
+                25-feature input vectors [BT×22, sec(zen)−1, land flag, surf pressure]
+                are fed to two sklearn MLPs trained on 53M collocated ATMS+ERA5 samples.
+                Water vapor uses a hybrid approach — linear g/kg below 600 hPa,
+                log-space model above for improved upper-troposphere accuracy.
+              </div>
+              <div class="pipeline-step-tag">
+                <span class="tag tag-cyan">37 T levels · 27 WV levels</span>
+              </div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num">04</div>
+            <div>
+              <div class="pipeline-step-title">T2/D2/Surface Pressure Retrieval</div>
+              <div class="pipeline-step-desc">
+                A dedicated MLP retrieves 2-metre temperature, 2-metre dewpoint, and
+                surface pressure using terrain height as the surface predictor instead
+                of ERA5 pressure — enabling surface parcel calculations for CAPE and LI.
+              </div>
+              <div class="pipeline-step-tag">
+                <span class="tag tag-amber">Required for CAPE · LI · CIN</span>
+              </div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num">05</div>
+            <div>
+              <div class="pipeline-step-title">Stability Index Computation</div>
+              <div class="pipeline-step-desc">
+                Full thermodynamic stability indices computed per FOV using Bolton (1980)
+                parcel physics: LCL, moist adiabatic ascent, LFC detection, and
+                trapezoidal CAPE/CIN integration in log-pressure coordinates.
+              </div>
+              <div class="pipeline-step-tag">
+                <span class="tag tag-red">KI · TT · LI · SI · CAPE · CIN · TPW</span>
+              </div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-num">06</div>
+            <div>
+              <div class="pipeline-step-title">Per-Pass Gridding &amp; Output</div>
+              <div class="pipeline-step-desc">
+                Each orbital pass is gridded separately at 0.25° using Delaunay
+                triangulation with maximum edge length filtering to prevent gap
+                interpolation. Results saved as georeferenced PNGs and NPZ arrays.
+              </div>
+              <div class="pipeline-step-tag">
+                <span class="tag tag-cyan">0.25° grid · Delaunay masked</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pass-info">
+        <div class="pass-stat">
+          <div class="pass-stat-label">Satellite</div>
+          <div class="pass-stat-value">NOAA-20 (N20)</div>
+          <div class="pass-stat-sub">Joint Polar Satellite System</div>
+        </div>
+        <div class="pass-stat">
+          <div class="pass-stat-label">Instrument</div>
+          <div class="pass-stat-value">ATMS</div>
+          <div class="pass-stat-sub">Advanced Technology Microwave Sounder<br>22 channels · 50–190 GHz</div>
+        </div>
+        <div class="pass-stat">
+          <div class="pass-stat-label">Pass Time (UTC)</div>
+          <div class="pass-stat-value cyan mono">19:16 – 19:22</div>
+          <div class="pass-stat-sub">Ascending · April 23 2026</div>
+        </div>
+        <div class="pass-stat">
+          <div class="pass-stat-label">Coverage</div>
+          <div class="pass-stat-value">lat 28–46°N</div>
+          <div class="pass-stat-sub">lon 110–82°W · ~2,600 km swath</div>
+        </div>
+        <div class="pass-stat">
+          <div class="pass-stat-label">FOVs Processed</div>
+          <div class="pass-stat-value cyan mono">10,680</div>
+          <div class="pass-stat-sub">After time window filter</div>
+        </div>
+        <div class="pass-stat">
+          <div class="pass-stat-label">Surface Data</div>
+          <div class="pass-stat-value">ERA5 Reanalysis</div>
+          <div class="pass-stat-sub">ECMWF · hourly · 0.25°<br>Temporally interpolated per FOV</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── RETRIEVAL VIEWER ──────────────────────────────────────────── -->
+<section class="section" id="retrieval">
+  <div class="container">
+    <p class="section-label">03 · Temperature &amp; Water Vapor Retrieval</p>
+    <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:700;margin-bottom:12px;">
+      Vertical atmospheric profiles
+    </h2>
+    <p class="muted" style="max-width:640px;line-height:1.7;">
+      Browse retrieved temperature and water vapor at all 37 pressure levels.
+      Use the slider to navigate the vertical atmosphere — from the boundary layer
+      at 1000 hPa to the lower stratosphere at 1 hPa.
+    </p>
+
+    <div class="viewer-container reveal">
+      <div class="viewer-controls">
+        <div class="viewer-tab-group" id="productTabs">
+          <button class="viewer-tab active" data-product="temperature" onclick="switchProduct('temperature', this)">Temperature</button>
+          <button class="viewer-tab" data-product="water_vapor" onclick="switchProduct('water_vapor', this)">Water Vapor</button>
+        </div>
+        <div class="level-slider-wrap">
+          <label>PRESSURE LEVEL</label>
+          <input type="range" class="level-slider" id="levelSlider" min="0" max="36" value="6" oninput="updateLevel(this.value)">
+          <span class="level-display" id="levelDisplay">850 hPa</span>
+        </div>
+      </div>
+      <div class="viewer-map-area" id="viewerMapArea">
+        <div class="viewer-map-placeholder" id="viewerPlaceholder">
+          <div class="icon">🛰</div>
+          <div>PNG files load from <span class="cyan mono">./output/temperature/</span></div>
+          <div class="muted">Place output folder alongside index.html</div>
+        </div>
+        <img id="viewerImg" src="" alt="Retrieval map" style="display:none;" onload="imgLoaded()" onerror="imgError()">
+      </div>
+      <div class="viewer-footer">
+        <span id="viewerFilename" class="mono">—</span>
+        <span>N20 · ATMS MLP Retrieval · April 23 2026 14–20Z</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STABILITY INDICES ─────────────────────────────────────────── -->
+<section class="section" id="indices" style="background:var(--bg-deep);">
+  <div class="container">
+    <p class="section-label">04 · Atmospheric Instability Indices</p>
+    <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:700;margin-bottom:12px;">
+      Severe weather indicators
+    </h2>
+    <p class="muted" style="max-width:640px;line-height:1.7;">
+      Seven instability indices computed from the retrieved T and WV profiles
+      using full Bolton (1980) parcel physics. Click any index to view the
+      full gridded map with threshold contours.
+    </p>
+
+    <div class="indices-grid reveal" id="indicesGrid">
+      <!-- Cards injected by JS -->
+    </div>
+
+    <div class="index-viewer" id="indexViewer">
+      <div class="index-viewer-header">
+        <div class="index-viewer-title" id="indexViewerTitle">K-Index</div>
+        <button onclick="closeIndexViewer()" style="background:none;border:none;color:var(--text-secondary);cursor:pointer;font-size:1.2rem;">✕</button>
+      </div>
+      <img id="indexViewerImg" src="" alt="Index map">
+      <div class="index-viewer-info" id="indexViewerInfo">
+        <!-- populated by JS -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ALERT THRESHOLDS ──────────────────────────────────────────── -->
+<section class="section" id="alert">
+  <div class="container">
+    <p class="section-label">05 · Operational Alert Assessment</p>
+    <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:700;margin-bottom:12px;">
+      Threshold exceedance at time of pass
+    </h2>
+    <p class="muted" style="max-width:640px;line-height:1.7;">
+      How the retrieved domain-mean indices compared to operational severe weather
+      thresholds at 19:16 UTC — approximately 4 hours before the EF-4 tornado.
+      Local warm-sector values significantly exceeded domain means.
+    </p>
+
+    <div class="alert-section reveal">
+      <div class="alert-header">
+        <div class="alert-icon">⚠</div>
+        <div>
+          <div style="font-family:var(--font-display);font-size:1rem;font-weight:600;">
+            Multiple thresholds exceeded — severe weather environment confirmed
+          </div>
+          <div class="muted" style="font-size:0.85rem;margin-top:4px;">
+            Domain-mean values shown. Warm sector peaks (Oklahoma/Kansas) were significantly higher.
+          </div>
+        </div>
+      </div>
+      <div class="alert-thresholds" id="alertThresholds">
+        <!-- populated by JS -->
+      </div>
+    </div>
+
+    <div style="margin-top:40px;padding:28px;background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius-lg);">
+      <p class="section-label" style="margin-bottom:16px;">Operational Use Case</p>
+      <p style="color:var(--text-secondary);line-height:1.8;max-width:700px;">
+        In an operational setting, this pipeline would run automatically within
+        <strong style="color:var(--text-primary);">~30 minutes</strong> of data availability
+        on NOAA NODD. Emergency managers and NWS forecasters would receive
+        automated alerts when any monitored region exceeds user-defined thresholds —
+        providing <strong style="color:var(--text-primary);">~3–4 hours of additional lead time</strong>
+        beyond conventional surface observation networks, derived entirely from
+        satellite-based microwave soundings at 50 km resolution.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ───────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">CESSRST · ATMS Atmospheric Instability</div>
+      <div class="footer-meta" style="margin-top:6px;">
+        City College of New York · NOAA Center for Earth System Sciences<br>
+        and Remote Sensing Technologies
+      </div>
+    </div>
+    <div class="footer-meta" style="text-align:right;">
+      <div>NOAA-20 ATMS · BUFR via NOAA NODD</div>
+      <div>ERA5 Reanalysis · ECMWF</div>
+      <div style="margin-top:4px;">Case study: April 23 2026</div>
+    </div>
+  </div>
+</footer>
+
+<!-- ── JAVASCRIPT ────────────────────────────────────────────────── -->
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────────
+const DATE_RANGE = '2026-04-23_1400Z_to_2026-04-23_2000Z';
+const REGION     = 'Target_Region';
+
+const PRESSURE_LEVELS_T = [
+  1000,975,950,925,900,875,850,825,800,775,750,700,
+  650,600,550,500,450,400,350,300,250,225,200,175,
+  150,125,100,70,50,30,20,10,7,5,3,2,1
+];
+const PRESSURE_LEVELS_WV = [
+  1000,975,950,925,900,875,850,825,800,775,
+  750,700,650,550,500,450,400,350,300,
+  250,225,200,175,150,125,100
+];
+
+const INDEX_META = {
+  KI:   {
+    name: 'K-Index', unit: '°C', mean: '22.4', color: 'amber',
+    desc: 'Thunderstorm potential. KI > 35 indicates likely thunderstorms.',
+    threshold: 35, max: 55, warn: 30, severe: 40,
+    interp: 'Widespread KI > 30 over the warm sector (Kansas/Oklahoma) with local peaks exceeding 35 — confirming thunderstorm potential hours before initiation.'
+  },
+  TT:   {
+    name: 'Total-Totals', unit: '°C', mean: '46.4', color: 'amber',
+    desc: 'Combines lower-level moisture and mid-level temperature lapse rate.',
+    threshold: 50, max: 60, warn: 45, severe: 50,
+    interp: 'Domain mean of 46.4°C just below the severe threshold, with local values exceeding 52°C over the central plains — consistent with a significant tornado outbreak environment.'
+  },
+  LI:   {
+    name: 'Lifted Index', unit: 'K', mean: '−1.9', color: 'red',
+    desc: 'Negative values indicate instability. LI < −4 indicates strong instability.',
+    threshold: -4, max: 10, warn: -2, severe: -6, invert: true,
+    interp: 'Strongly negative LI over the Oklahoma/Texas warm sector confirms active convective instability. LI < −6 locally consistent with violent tornado potential.'
+  },
+  SI:   {
+    name: 'Showalter Index', unit: 'K', mean: '1.1', color: 'cyan',
+    desc: 'Lifts a parcel from 850 hPa to 500 hPa. Negative = unstable.',
+    threshold: -3, max: 15, warn: 0, severe: -3, invert: true,
+    interp: 'Domain mean slightly positive, but western Oklahoma/Kansas showing strongly negative SI, indicating the mid-tropospheric lapse rate strongly favors convective development.'
+  },
+  CAPE: {
+    name: 'CAPE', unit: 'J/kg', mean: '492', color: 'red',
+    desc: 'Convective Available Potential Energy. > 2500 J/kg indicates very high instability.',
+    threshold: 1000, max: 2000, warn: 1000, severe: 2500,
+    interp: 'Domain-mean CAPE of 492 J/kg, with warm-sector peaks exceeding 1,600 J/kg. Local CAPE > 2,500 J/kg is consistent with the violent tornadoes observed later that evening.'
+  },
+  CIN:  {
+    name: 'CIN', unit: 'J/kg', mean: '—', color: 'cyan',
+    desc: 'Convective Inhibition. Moderate CIN (−50 to −200) caps instability until release.',
+    threshold: -200, max: 0, warn: -50, severe: -200, invert: true,
+    interp: 'Strong CIN cap (< −200 J/kg) over the Texas panhandle / western Oklahoma — the classic "loaded gun" sounding. Convection held in check until the dryline triggered release.'
+  },
+  TPW:  {
+    name: 'Total Precip. Water', unit: 'mm', mean: '20.4', color: 'cyan',
+    desc: 'Column-integrated moisture. > 35 mm indicates a very moist atmosphere.',
+    threshold: 35, max: 40, warn: 25, severe: 35,
+    interp: 'TPW > 30 mm across the warm sector confirms abundant low-level moisture. The sharp east-west gradient marks the dryline — the boundary that triggered storm initiation.'
+  },
+};
+
+let currentProduct = 'temperature';
+let currentLevel   = 6; // index into PRESSURE_LEVELS_T → 850 hPa
+let activeIndexCard = null;
+
+// ── PRESSURE LEVEL SLIDER ────────────────────────────────────────────
+function updateLevel(idx) {
+  currentLevel = parseInt(idx);
+  const levels = currentProduct === 'temperature' ? PRESSURE_LEVELS_T : PRESSURE_LEVELS_WV;
+  const p = levels[Math.min(currentLevel, levels.length - 1)];
+  document.getElementById('levelDisplay').textContent = p + ' hPa';
+  loadViewerMap();
+}
+
+function switchProduct(product, btn) {
+  currentProduct = product;
+  document.querySelectorAll('.viewer-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  // Reset slider max
+  const levels = product === 'temperature' ? PRESSURE_LEVELS_T : PRESSURE_LEVELS_WV;
+  const slider = document.getElementById('levelSlider');
+  slider.max = levels.length - 1;
+  slider.value = Math.min(currentLevel, levels.length - 1);
+  updateLevel(slider.value);
+}
+
+function loadViewerMap() {
+  const levels = currentProduct === 'temperature' ? PRESSURE_LEVELS_T : PRESSURE_LEVELS_WV;
+  const p      = levels[Math.min(currentLevel, levels.length - 1)];
+  const folder = currentProduct === 'temperature' ? 'temperature' : 'water_vapor';
+  const prefix = currentProduct === 'temperature' ? 'T' : 'WV';
+  const fname  = `${prefix}_${p}hPa_${DATE_RANGE}_${REGION}.png`;
+  const path   = `./output/${folder}/${fname}`;
+
+  document.getElementById('viewerFilename').textContent = fname;
+
+  const img = document.getElementById('viewerImg');
+  const ph  = document.getElementById('viewerPlaceholder');
+  img.style.display = 'none';
+  ph.style.display  = 'flex';
+  img.src = path;
+}
+
+function imgLoaded() {
+  document.getElementById('viewerImg').style.display = 'block';
+  document.getElementById('viewerPlaceholder').style.display = 'none';
+}
+
+function imgError() {
+  document.getElementById('viewerImg').style.display = 'none';
+  document.getElementById('viewerPlaceholder').style.display = 'flex';
+  document.getElementById('viewerPlaceholder').innerHTML = `
+    <div class="icon">📁</div>
+    <div>Image not found</div>
+    <div class="muted mono" style="font-size:0.7rem;">${document.getElementById('viewerFilename').textContent}</div>
+    <div class="muted" style="font-size:0.75rem;margin-top:4px;">Place <code style="color:var(--cyan)">output/</code> folder alongside index.html</div>
+  `;
+}
+
+// ── INDEX CARDS ──────────────────────────────────────────────────────
+function buildIndexCards() {
+  const grid = document.getElementById('indicesGrid');
+  grid.innerHTML = '';
+
+  Object.entries(INDEX_META).forEach(([key, meta]) => {
+    const colorClass = meta.color === 'red' ? 'red' : meta.color === 'amber' ? 'amber' : 'cyan';
+    const card = document.createElement('div');
+    card.className = 'index-card';
+    card.id = `card-${key}`;
+    card.onclick = () => openIndex(key);
+    card.innerHTML = `
+      <div class="index-card-header">
+        <span class="index-card-name">${meta.name}</span>
+        <span class="index-card-value ${colorClass} mono">${meta.mean} ${meta.unit}</span>
+      </div>
+      <img class="index-card-img"
+           src="./output/stability_indices/${key}_${DATE_RANGE}_${REGION}.png"
+           alt="${meta.name} map"
+           onerror="this.style.background='var(--bg-deep)';this.style.minHeight='140px'">
+      <div class="index-card-footer">${meta.desc}</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function openIndex(key) {
+  const meta   = INDEX_META[key];
+  const viewer = document.getElementById('indexViewer');
+  const img    = document.getElementById('indexViewerImg');
+  const title  = document.getElementById('indexViewerTitle');
+  const info   = document.getElementById('indexViewerInfo');
+
+  // Update card active state
+  document.querySelectorAll('.index-card').forEach(c => c.classList.remove('active'));
+  document.getElementById(`card-${key}`).classList.add('active');
+  activeIndexCard = key;
+
+  title.textContent = `${meta.name} (${meta.unit})`;
+  img.src = `./output/stability_indices/${key}_${DATE_RANGE}_${REGION}.png`;
+
+  info.innerHTML = `
+    <div class="index-info-cell">
+      <div class="index-info-label">Domain Mean</div>
+      <div class="index-info-value">${meta.mean} ${meta.unit}</div>
+    </div>
+    <div class="index-info-cell">
+      <div class="index-info-label">Severe Threshold</div>
+      <div class="index-info-value">${meta.threshold} ${meta.unit}</div>
+    </div>
+    <div class="index-info-cell">
+      <div class="index-info-label">Interpretation</div>
+      <div class="index-info-value" style="font-size:0.78rem;font-weight:400;color:var(--text-secondary);font-family:var(--font-body);">${meta.interp}</div>
+    </div>
+  `;
+
+  viewer.classList.add('visible');
+  viewer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function closeIndexViewer() {
+  document.getElementById('indexViewer').classList.remove('visible');
+  document.querySelectorAll('.index-card').forEach(c => c.classList.remove('active'));
+  activeIndexCard = null;
+}
+
+// ── ALERT THRESHOLDS ─────────────────────────────────────────────────
+function buildAlertThresholds() {
+  const container = document.getElementById('alertThresholds');
+  const alerts = [
+    { key: 'KI',   val: 22.4, thresh: 35,    unit: '°C', label: 'K-Index',          invert: false },
+    { key: 'TT',   val: 46.4, thresh: 50,    unit: '°C', label: 'Total-Totals',     invert: false },
+    { key: 'LI',   val: -1.9, thresh: -4,    unit: 'K',  label: 'Lifted Index',     invert: true  },
+    { key: 'CAPE', val: 492,  thresh: 1000,  unit: 'J/kg',label: 'CAPE',            invert: false },
+    { key: 'TPW',  val: 20.4, thresh: 35,    unit: 'mm', label: 'Precip. Water',    invert: false },
+  ];
+
+  alerts.forEach(a => {
+    const exceeded = a.invert ? a.val <= a.thresh : a.val >= a.thresh;
+    const pct = a.invert
+      ? Math.min(100, Math.abs(a.val) / Math.abs(a.thresh) * 80)
+      : Math.min(100, (a.val / a.thresh) * 80);
+
+    const statusColor = exceeded ? 'var(--red)' : a.val > a.thresh * 0.7 ? 'var(--amber)' : 'var(--green)';
+    const barColor    = exceeded ? 'var(--red)' : a.val > a.thresh * 0.7 ? 'var(--amber)' : 'var(--green)';
+    const statusLabel = exceeded ? '⚠ EXCEEDED' : a.val > a.thresh * 0.7 ? '▲ ELEVATED' : '✓ NOMINAL';
+
+    container.innerHTML += `
+      <div class="threshold-row">
+        <span class="threshold-index cyan mono">${a.key}</span>
+        <div class="threshold-bar-wrap">
+          <div class="threshold-bar-bg">
+            <div class="threshold-bar-fill" style="width:${pct}%;background:${barColor};"></div>
+          </div>
+          <div class="threshold-labels">
+            <span>0</span>
+            <span>Mean: ${a.val} ${a.unit}</span>
+            <span>Threshold: ${a.thresh} ${a.unit}</span>
+          </div>
+        </div>
+        <span class="threshold-status" style="color:${statusColor};">${statusLabel}</span>
+      </div>
+    `;
+  });
+}
+
+// ── SCROLL REVEAL ─────────────────────────────────────────────────────
+function initReveal() {
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  buildIndexCards();
+  buildAlertThresholds();
+  loadViewerMap();
+  initReveal();
+});
+</script>
+</body>
+</html>
