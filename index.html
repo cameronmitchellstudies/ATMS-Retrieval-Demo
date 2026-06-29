@@ -746,6 +746,7 @@ footer {
       <li><a href="#event">Event</a></li>
       <li><a href="#pipeline">Pipeline</a></li>
       <li><a href="#retrieval">Retrieval</a></li>
+      <li><a href="#crosssection">Cross-Section</a></li>
       <li><a href="#indices">Indices</a></li>
       <li><a href="#alert">Alert</a></li>
     </ul>
@@ -765,7 +766,7 @@ footer {
     <p class="hero-subtitle">
       A microwave sounding retrieval pipeline processed N20 ATMS brightness temperatures
       from the 19:16 UTC ascending pass over the Central US — revealing the atmospheric
-      conditions that would produce an EF-4 tornado near Enid, Oklahoma that evening.
+      conditions that would produce an EF-4 tornado and other extreme weather events near Enid, Oklahoma later that evening.
     </p>
 
     <!-- THREAT BAR — signature element -->
@@ -781,25 +782,25 @@ footer {
         </div>
         <div class="threat-segment extreme" style="flex:2"><span class="threat-segment-label">20Z+<br>OUTBREAK</span></div>
       </div>
-      <div class="threat-values">
+      <div class="threat-values" id="heroStats">
         <div class="threat-value">
-          <span class="threat-value-num amber mono">22.4°</span>
-          <span class="threat-value-label">K-Index mean</span>
+          <span class="threat-value-num red mono" id="stat-CAPE-km2">~680,000 km²</span>
+          <span class="threat-value-label">land area with CAPE &gt; 1000 J/kg</span>
         </div>
         <div class="threat-value">
-          <span class="threat-value-num red mono">492</span>
-          <span class="threat-value-label">CAPE J/kg mean</span>
+          <span class="threat-value-num amber mono" id="stat-LI-km2">~2.1M km²</span>
+          <span class="threat-value-label">land area with LI &lt; &minus;4 K</span>
         </div>
         <div class="threat-value">
-          <span class="threat-value-num amber mono">46.4°</span>
-          <span class="threat-value-label">Total-Totals mean</span>
+          <span class="threat-value-num amber mono" id="stat-TT-pct">23.5%</span>
+          <span class="threat-value-label">of land with TT &gt; 50&deg;C</span>
         </div>
         <div class="threat-value">
-          <span class="threat-value-num cyan mono">20.4</span>
-          <span class="threat-value-label">TPW mm mean</span>
+          <span class="threat-value-num cyan mono" id="stat-LI-pct">40.0%</span>
+          <span class="threat-value-label">of land with LI &lt; &minus;4 K</span>
         </div>
         <div class="threat-value">
-          <span class="threat-value-num green mono">10,680</span>
+          <span class="threat-value-num green mono" id="stat-fovs">10,680</span>
           <span class="threat-value-label">FOVs processed</span>
         </div>
       </div>
@@ -862,6 +863,42 @@ footer {
         <div class="event-card-num green">~4 hrs</div>
         <div class="event-card-label">Lead time before EF-4</div>
         <div class="event-card-sub">Satellite pass to tornado initiation</div>
+      </div>
+    </div>
+
+    <!-- States affected + area stats — populated from stats JSON -->
+    <div id="stat-states-wrap" style="display:none;margin-top:28px;">
+      <div style="background:var(--bg-panel);border:1px solid var(--border-accent);
+                  border-radius:var(--radius-lg);padding:20px 24px;">
+        <div class="section-label" style="margin-bottom:10px;">
+          States with CAPE &gt; 1000 J/kg detected at time of pass
+        </div>
+        <div id="stat-states" style="font-family:var(--font-mono);font-size:0.85rem;
+             color:var(--text-primary);line-height:1.8;"></div>
+        <div style="display:flex;gap:32px;margin-top:14px;padding-top:14px;
+                    border-top:1px solid var(--border);flex-wrap:wrap;">
+          <div>
+            <div style="font-family:var(--font-mono);font-size:0.65rem;
+                        color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;
+                        margin-bottom:4px;">Total Observed Land Area</div>
+            <div id="stat-land-km2" style="font-family:var(--font-display);
+                 font-size:1.1rem;font-weight:600;color:var(--cyan);">—</div>
+          </div>
+          <div>
+            <div style="font-family:var(--font-mono);font-size:0.65rem;
+                        color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;
+                        margin-bottom:4px;">Land with CAPE &gt; 1000 J/kg</div>
+            <div id="stat-cape-land-km2" style="font-family:var(--font-display);
+                 font-size:1.1rem;font-weight:600;color:var(--red);">—</div>
+          </div>
+          <div>
+            <div style="font-family:var(--font-mono);font-size:0.65rem;
+                        color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;
+                        margin-bottom:4px;">Land with LI &lt; &minus;4 K</div>
+            <div id="stat-li-land-km2" style="font-family:var(--font-display);
+                 font-size:1.1rem;font-weight:600;color:var(--amber);">—</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1048,6 +1085,59 @@ footer {
   </div>
 </section>
 
+<!-- ── CROSS-SECTION ────────────────────────────────────────────── -->
+<section class="section" id="crosssection" style="background:var(--bg-void);">
+  <div class="container">
+    <p class="section-label">03b &middot; Atmospheric Cross-Section</p>
+    <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:700;margin-bottom:12px;">
+      West&ndash;East transect along 37&deg;N
+    </h2>
+    <p class="muted" style="max-width:700px;line-height:1.7;margin-bottom:24px;">
+      Temperature and water vapor retrieved along the transect described in
+      Goldberg (2026) &mdash; cutting west to east at 37&deg;N from 107&deg;W to 82&deg;W across
+      the cold sector, dryline, warm sector, active convective line, and Ohio Valley
+      return-flow region. Vertical axis is pressure (log scale, surface at bottom).
+    </p>
+    <div class="viewer-container reveal">
+      <div class="viewer-controls" style="padding:12px 20px;">
+        <span class="section-label" style="margin:0;">
+          N20 &middot; April 23 2026 &middot; 14&ndash;20Z &middot; Cross-section at ~37&deg;N
+        </span>
+      </div>
+      <div style="background:var(--bg-deep);">
+        <img id="crossSectionImg"
+             src="./output/profiles/crosssection_37N_2026-04-23_1400Z_to_2026-04-23_2000Z_Target_Region.png"
+             alt="Atmospheric cross-section along 37N"
+             style="width:100%;display:block;"
+             onerror="this.style.display='none'">
+      </div>
+      <div style="padding:0;border-top:1px solid var(--border);display:grid;
+                  grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);">
+        <div style="background:var(--bg-panel);padding:12px 14px;">
+          <div class="section-label" style="margin-bottom:4px;color:#4488aa;">Zone 1</div>
+          <div style="font-size:0.78rem;color:var(--text-secondary);">Cold Sector<br>CAPE 1500&ndash;2800<br>CIN &gt; 200 J/kg</div>
+        </div>
+        <div style="background:var(--bg-panel);padding:12px 14px;">
+          <div class="section-label" style="margin-bottom:4px;color:var(--amber);">Zone 2</div>
+          <div style="font-size:0.78rem;color:var(--text-secondary);">Dryline ~98&deg;W<br>Peak instability<br>CAPE &gt; 3000</div>
+        </div>
+        <div style="background:var(--bg-panel);padding:12px 14px;">
+          <div class="section-label" style="margin-bottom:4px;color:var(--red);">Zone 3</div>
+          <div style="font-size:0.78rem;color:var(--text-secondary);">Warm Sector<br>Loaded gun<br>LI &lt; &minus;6</div>
+        </div>
+        <div style="background:var(--bg-panel);padding:12px 14px;">
+          <div class="section-label" style="margin-bottom:4px;color:#8888ff;">Zone 4</div>
+          <div style="font-size:0.78rem;color:var(--text-secondary);">Convective Line<br>CAPE consumed<br>Cold pool</div>
+        </div>
+        <div style="background:var(--bg-panel);padding:12px 14px;">
+          <div class="section-label" style="margin-bottom:4px;color:#44aa88;">Zone 5</div>
+          <div style="font-size:0.78rem;color:var(--text-secondary);">Ohio Valley<br>Return flow<br>CAPE 1500&ndash;2000</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ── STABILITY INDICES ─────────────────────────────────────────── -->
 <section class="section" id="indices" style="background:var(--bg-deep);">
   <div class="container">
@@ -1111,11 +1201,11 @@ footer {
     <div style="margin-top:40px;padding:28px;background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius-lg);">
       <p class="section-label" style="margin-bottom:16px;">Operational Use Case</p>
       <p style="color:var(--text-secondary);line-height:1.8;max-width:700px;">
-        In an operational setting, this pipeline would run automatically within
-        <strong style="color:var(--text-primary);">~30 minutes</strong> of data availability
+        In an operational setting, this pipeline would run automatically
+        <strong style="color:var(--text-primary);">within minutes</strong> of data availability
         on NOAA NODD. Emergency managers and NWS forecasters would receive
-        automated alerts when any monitored region exceeds user-defined thresholds —
-        providing <strong style="color:var(--text-primary);">~3–4 hours of additional lead time</strong>
+        automated alerts when any monitored region exceeds instability thresholds —
+        providing </br> <strong style="color:var(--text-primary);">~3–4 hours of additional lead time</strong>
         beyond conventional surface observation networks, derived entirely from
         satellite-based microwave soundings at 50 km resolution.
       </p>
@@ -1328,43 +1418,101 @@ function closeIndexViewer() {
 }
 
 // ── ALERT THRESHOLDS ─────────────────────────────────────────────────
-function buildAlertThresholds() {
+function buildAlertThresholds(stats) {
   const container = document.getElementById('alertThresholds');
+  const exc = stats ? (stats.exceedance_pct || {}) : {};
+  const km2 = stats ? (stats.exceedance_km2 || {}) : {};
+
   const alerts = [
-    { key: 'KI',   val: 22.4, thresh: 35,    unit: '°C', label: 'K-Index',          invert: false },
-    { key: 'TT',   val: 46.4, thresh: 50,    unit: '°C', label: 'Total-Totals',     invert: false },
-    { key: 'LI',   val: -1.9, thresh: -4,    unit: 'K',  label: 'Lifted Index',     invert: true  },
-    { key: 'CAPE', val: 492,  thresh: 1000,  unit: 'J/kg',label: 'CAPE',            invert: false },
-    { key: 'TPW',  val: 20.4, thresh: 35,    unit: 'mm', label: 'Precip. Water',    invert: false },
+    { key: 'KI',   label: 'K-Index',           unit: '°C',   invert: false,
+      levels: [
+        { thresh: 20,   pctKey: 'KI_gt20',    desc: 'Isolated storms possible',  color: '#ffffcc' },
+        { thresh: 35,   pctKey: 'KI_gt35',    desc: 'Numerous thunderstorms',    color: 'var(--amber)' },
+        { thresh: 40,   pctKey: 'KI_gt40',    desc: 'Very numerous / severe',    color: 'var(--red)' },
+      ]},
+    { key: 'TT',   label: 'Total-Totals',       unit: '°C',   invert: false,
+      levels: [
+        { thresh: 44,   pctKey: 'TT_gt44',    desc: 'Some severe weather',       color: '#ffffcc' },
+        { thresh: 50,   pctKey: 'TT_gt50',    desc: 'Significant severe',        color: 'var(--amber)' },
+        { thresh: 55,   pctKey: 'TT_gt55',    desc: 'Violent tornado potential', color: 'var(--red)' },
+      ]},
+    { key: 'LI',   label: 'Lifted Index',       unit: 'K',    invert: true,
+      levels: [
+        { thresh: -2,   pctKey: 'LI_lt-2',    desc: 'Moderate instability',      color: '#ffffcc' },
+        { thresh: -4,   pctKey: 'LI_lt-4',    desc: 'Strong instability',        color: 'var(--amber)' },
+        { thresh: -6,   pctKey: 'LI_lt-6',    desc: 'Extreme — violent storms',  color: 'var(--red)' },
+      ]},
+    { key: 'CAPE', label: 'CAPE',               unit: 'J/kg', invert: false,
+      levels: [
+        { thresh: 1000, pctKey: 'CAPE_gt1000', desc: 'Moderate convection',      color: '#ffffcc' },
+        { thresh: 2500, pctKey: 'CAPE_gt2500', desc: 'Large — significant',      color: 'var(--amber)' },
+        { thresh: 3500, pctKey: 'CAPE_gt3500', desc: 'Extreme — violent',        color: 'var(--red)' },
+      ]},
+    { key: 'CIN',  label: 'CIN (cap strength)', unit: 'J/kg', invert: true,
+      levels: [
+        { thresh: -25,  pctKey: 'CIN_lt-25',  desc: 'Weak cap',                  color: '#d0e8f7' },
+        { thresh: -100, pctKey: 'CIN_lt-100', desc: 'Moderate cap',              color: 'var(--amber)' },
+        { thresh: -200, pctKey: 'CIN_lt-200', desc: 'Loaded gun cap',            color: 'var(--red)' },
+      ]},
+    { key: 'TPW',  label: 'Precipitable Water', unit: 'mm',   invert: false,
+      levels: [
+        { thresh: 25,   pctKey: 'TPW_gt25',   desc: 'Elevated moisture',         color: '#c7e9b4' },
+        { thresh: 35,   pctKey: 'TPW_gt35',   desc: 'Anomalously moist',         color: 'blue' },
+      ]},
   ];
 
   alerts.forEach(a => {
-    const exceeded = a.invert ? a.val <= a.thresh : a.val >= a.thresh;
-    const pct = a.invert
-      ? Math.min(100, Math.abs(a.val) / Math.abs(a.thresh) * 80)
-      : Math.min(100, (a.val / a.thresh) * 80);
-
-    const statusColor = exceeded ? 'var(--red)' : a.val > a.thresh * 0.7 ? 'var(--amber)' : 'var(--green)';
-    const barColor    = exceeded ? 'var(--red)' : a.val > a.thresh * 0.7 ? 'var(--amber)' : 'var(--green)';
-    const statusLabel = exceeded ? '⚠ EXCEEDED' : a.val > a.thresh * 0.7 ? '▲ ELEVATED' : '✓ NOMINAL';
+    const threshDir = a.invert ? '<' : '>';
+    const levelsHTML = a.levels.map(lv => {
+      const pct    = exc[lv.pctKey] || 0;
+      const km2val = km2[lv.pctKey];
+      const flag   = pct > 30 ? '⚠' : pct > 10 ? '▲' : '–';
+      const col    = pct > 30 ? 'var(--red)' : pct > 10 ? 'var(--amber)' : 'var(--text-muted)';
+      const km2Str = km2val !== undefined
+        ? Math.round(km2val).toLocaleString() + ' km²'
+        : '—';
+      return `
+        <div style="display:flex;align-items:center;gap:10px;padding:6px 0;
+                    border-bottom:1px solid var(--border);">
+          <span style="font-family:var(--font-mono);font-size:0.7rem;
+                       color:var(--text-muted);min-width:90px;">
+            ${threshDir} ${lv.thresh} ${a.unit}
+          </span>
+          <div style="flex:1;">
+            <div style="height:5px;background:var(--border);border-radius:2px;overflow:hidden;">
+              <div style="width:${Math.min(pct*2,100)}%;height:100%;
+                           background:${lv.color};border-radius:2px;
+                           transition:width 1s ease;"></div>
+            </div>
+          </div>
+          <span style="font-family:var(--font-mono);font-size:0.72rem;
+                       min-width:110px;text-align:right;color:var(--text-secondary);">
+            ${km2Str}
+          </span>
+          <span style="font-family:var(--font-mono);font-size:0.72rem;
+                       min-width:52px;text-align:right;color:${col};">
+            ${pct.toFixed(1)}% ${flag}
+          </span>
+          <span style="font-size:0.72rem;color:var(--text-secondary);
+                       min-width:160px;">${lv.desc}</span>
+        </div>`;
+    }).join('');
 
     container.innerHTML += `
-      <div class="threshold-row">
-        <span class="threshold-index cyan mono">${a.key}</span>
-        <div class="threshold-bar-wrap">
-          <div class="threshold-bar-bg">
-            <div class="threshold-bar-fill" style="width:${pct}%;background:${barColor};"></div>
-          </div>
-          <div class="threshold-labels">
-            <span>0</span>
-            <span>Mean: ${a.val} ${a.unit}</span>
-            <span>Threshold: ${a.thresh} ${a.unit}</span>
-          </div>
+      <div class="threshold-row" style="flex-direction:column;gap:0;
+           align-items:stretch;padding:14px 16px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span class="threshold-index cyan mono">${a.key}</span>
+          <span style="font-size:0.82rem;color:var(--text-secondary);">${a.label}</span>
+          <span style="margin-left:auto;font-family:var(--font-mono);font-size:0.65rem;
+                       color:var(--text-muted);">km² &nbsp;|&nbsp; % land area observed</span>
         </div>
-        <span class="threshold-status" style="color:${statusColor};">${statusLabel}</span>
+        ${levelsHTML}
       </div>
     `;
   });
+
+
 }
 
 // ── SCROLL REVEAL ─────────────────────────────────────────────────────
@@ -1380,10 +1528,73 @@ function initReveal() {
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 }
 
-// ── INIT ──────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
+// ── LOAD STATS JSON ─────────────────────────────────────────────
+async function loadStats() {
+  const fname = `./output/stats_${DATE_RANGE}_${REGION}.json`;
+  try {
+    const r = await fetch(fname);
+    if (!r.ok) throw new Error('not found');
+    const stats = await r.json();
+    const exc  = stats.exceedance_pct || {};
+    const km2  = stats.exceedance_km2 || {};
+    const el   = id => document.getElementById(id);
+    const fmtPct  = v => v !== undefined ? v.toFixed(1) + '%' : '—';
+    const fmtKm2  = v => v !== undefined ? Math.round(v).toLocaleString() + ' km²' : '—';
+
+    // Hero stats — km² for top two, % for bottom two
+    if (el('stat-CAPE-km2')) el('stat-CAPE-km2').textContent = fmtKm2(km2['CAPE_gt1000']);
+    if (el('stat-LI-km2'))   el('stat-LI-km2').textContent   = fmtKm2(km2['LI_lt-4']);
+    if (el('stat-TT-pct'))   el('stat-TT-pct').textContent   = fmtPct(exc['TT_gt50']);
+    if (el('stat-LI-pct'))   el('stat-LI-pct').textContent   = fmtPct(exc['LI_lt-4']);
+    if (el('stat-fovs'))     el('stat-fovs').textContent     = (stats.n_fovs || 10680).toLocaleString();
+
+    // Peak CAPE in event cards
+    if (el('stat-CAPE-peak') && stats.peaks && stats.peaks.CAPE)
+      el('stat-CAPE-peak').textContent = '>' + Math.round(stats.peaks.CAPE).toLocaleString();
+
+    // States affected panel
+    if (stats.states_affected && stats.states_affected.length > 0) {
+      const wrap = el('stat-states-wrap');
+      if (wrap) wrap.style.display = 'block';
+      const statesEl = el('stat-states');
+      if (statesEl) statesEl.textContent = stats.states_affected.join(' · ');
+      if (el('stat-land-km2'))
+        el('stat-land-km2').textContent = fmtKm2(stats.total_land_km2);
+      if (el('stat-cape-land-km2'))
+        el('stat-cape-land-km2').textContent = fmtKm2(km2['CAPE_gt1000']);
+      if (el('stat-li-land-km2'))
+        el('stat-li-land-km2').textContent = fmtKm2(km2['LI_lt-4']);
+    }
+
+    // Update INDEX_META means/peaks for index cards
+    if (stats.means) {
+      const m = stats.means;
+      if (INDEX_META.KI)   INDEX_META.KI.mean   = m.KI   != null ? m.KI.toFixed(1)              : '—';
+      if (INDEX_META.TT)   INDEX_META.TT.mean   = m.TT   != null ? m.TT.toFixed(1)              : '—';
+      if (INDEX_META.LI)   INDEX_META.LI.mean   = m.LI   != null ? m.LI.toFixed(1)              : '—';
+      if (INDEX_META.SI)   INDEX_META.SI.mean   = m.SI   != null ? m.SI.toFixed(1)              : '—';
+      if (INDEX_META.CAPE) INDEX_META.CAPE.mean = m.CAPE != null ? Math.round(m.CAPE).toString() : '—';
+      if (INDEX_META.TPW)  INDEX_META.TPW.mean  = m.TPW  != null ? m.TPW.toFixed(1)             : '—';
+    }
+    if (stats.peaks) {
+      const p = stats.peaks;
+      if (INDEX_META.CAPE) INDEX_META.CAPE.peak = p.CAPE != null ? '>' + Math.round(p.CAPE) : '';
+      if (INDEX_META.KI)   INDEX_META.KI.peak   = p.KI   != null ? p.KI.toFixed(1)          : '';
+      if (INDEX_META.TT)   INDEX_META.TT.peak   = p.TT   != null ? p.TT.toFixed(1)          : '';
+      if (INDEX_META.LI)   INDEX_META.LI.peak   = p.LI   != null ? p.LI.toFixed(1)          : '';
+    }
+    return stats;
+  } catch(e) {
+    console.warn('Stats JSON not found — using hardcoded defaults:', e.message);
+    return null;
+  }
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+  const stats = await loadStats();
   buildIndexCards();
-  buildAlertThresholds();
+  buildAlertThresholds(stats);
   loadViewerMap();
   initReveal();
 });
