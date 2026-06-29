@@ -209,6 +209,7 @@ nav {
   padding: 24px 28px;
   margin-bottom: 48px;
   max-width: 720px;
+  position: relative;
 }
 .threat-bar-label {
   font-family: var(--font-mono);
@@ -224,6 +225,7 @@ nav {
   gap: 0;
   position: relative;
   height: 48px;
+  overflow: visible;
 }
 .threat-segment {
   height: 100%;
@@ -245,26 +247,39 @@ nav {
 .threat-segment-label  { writing-mode: horizontal-tb; text-align: center; padding: 0 4px; }
 .threat-now-marker {
   position: absolute;
-  top: -20px;
+  top: -28px;
+  left: 50%;
   transform: translateX(-50%);
   font-family: var(--font-mono);
   font-size: 0.65rem;
   color: var(--cyan);
   white-space: nowrap;
-  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  display: flex; flex-direction: column; align-items: center; gap: 0;
+  pointer-events: none;
+  z-index: 10;
 }
 .threat-now-marker::after {
   content: '';
-  width: 1px; height: 56px;
+  width: 2px; height: 28px;
   background: var(--cyan);
-  margin-top: 2px;
+  margin-top: 0;
 }
 .threat-values {
-  display: flex; gap: 28px; margin-top: 14px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  margin-top: 20px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
 }
 .threat-value {
-  display: flex; flex-direction: column; gap: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 18px;
+  background: var(--bg-panel);
 }
 .threat-value-num {
   font-family: var(--font-mono);
@@ -772,36 +787,46 @@ footer {
     <!-- THREAT BAR — signature element -->
     <div class="threat-bar">
       <div class="threat-bar-label">Atmospheric Threat Timeline · April 23 2026 UTC</div>
+      <!-- Pass marker: absolutely positioned relative to .threat-bar
+           left:71.5% puts it at the boundary between 10-14Z and 14-20Z segments
+           (3 of 5 equal segments = 60%, but label+bar offset tweaked to 71.5%) -->
+      <div style="position:absolute;left:71.5%;top:44px;
+                  transform:translateX(-50%);
+                  display:flex;flex-direction:column;align-items:center;
+                  font-family:var(--font-mono);font-size:0.62rem;font-weight:600;
+                  color:var(--cyan);white-space:nowrap;z-index:10;
+                  pointer-events:none;">
+        <span>◀ N20 PASS</span>
+        <span style="margin-bottom:2px;">19:16Z</span>
+        <div style="width:2px;height:48px;background:var(--cyan);
+                    box-shadow:0 0 4px var(--cyan);"></div>
+      </div>
       <div class="threat-timeline" id="threatTimeline">
         <div class="threat-segment low"    style="flex:2"><span class="threat-segment-label">00–06Z<br>STABLE</span></div>
         <div class="threat-segment low"    style="flex:2"><span class="threat-segment-label">06–10Z<br>STABLE</span></div>
         <div class="threat-segment mod"    style="flex:2"><span class="threat-segment-label">10–14Z<br>BUILDING</span></div>
-        <div class="threat-segment high"   style="flex:2" id="passSegment">
-          <div class="threat-now-marker">◀ N20 PASS<br>19:16Z</div>
+        <div class="threat-segment high" style="flex:2" id="passSegment">
           <span class="threat-segment-label">14–20Z<br>HIGH</span>
         </div>
         <div class="threat-segment extreme" style="flex:2"><span class="threat-segment-label">20Z+<br>OUTBREAK</span></div>
       </div>
+
       <div class="threat-values" id="heroStats">
         <div class="threat-value">
-          <span class="threat-value-num red mono" id="stat-CAPE-km2">~680,000 km²</span>
-          <span class="threat-value-label">land area with CAPE &gt; 1000 J/kg</span>
-        </div>
-        <div class="threat-value">
-          <span class="threat-value-num amber mono" id="stat-LI-km2">~2.1M km²</span>
-          <span class="threat-value-label">land area with LI &lt; &minus;4 K</span>
-        </div>
-        <div class="threat-value">
-          <span class="threat-value-num amber mono" id="stat-TT-pct">23.5%</span>
-          <span class="threat-value-label">of land with TT &gt; 50&deg;C</span>
-        </div>
-        <div class="threat-value">
-          <span class="threat-value-num cyan mono" id="stat-LI-pct">40.0%</span>
-          <span class="threat-value-label">of land with LI &lt; &minus;4 K</span>
-        </div>
-        <div class="threat-value">
           <span class="threat-value-num green mono" id="stat-fovs">10,680</span>
-          <span class="threat-value-label">FOVs processed</span>
+          <span class="threat-value-label">satellite FOVs processed</span>
+        </div>
+        <div class="threat-value">
+          <span class="threat-value-num red mono" id="stat-CAPE-km2">573,161 km²</span>
+          <span class="threat-value-label">CAPE &gt; 1000 J/kg &mdash; organised severe convection likely</span>
+        </div>
+        <div class="threat-value">
+          <span class="threat-value-num red mono" id="stat-LI6-km2">1,405,220 km²</span>
+          <span class="threat-value-label">LI &lt; &minus;6 K &mdash; extreme instability, violent tornado risk</span>
+        </div>
+        <div class="threat-value">
+          <span class="threat-value-num amber mono" id="stat-TT55-km2">116,340 km²</span>
+          <span class="threat-value-label">TT &gt; 55&deg;C &mdash; violent tornado potential</span>
         </div>
       </div>
     </div>
@@ -866,41 +891,6 @@ footer {
       </div>
     </div>
 
-    <!-- States affected + area stats — populated from stats JSON -->
-    <div id="stat-states-wrap" style="display:none;margin-top:28px;">
-      <div style="background:var(--bg-panel);border:1px solid var(--border-accent);
-                  border-radius:var(--radius-lg);padding:20px 24px;">
-        <div class="section-label" style="margin-bottom:10px;">
-          States with CAPE &gt; 1000 J/kg detected at time of pass
-        </div>
-        <div id="stat-states" style="font-family:var(--font-mono);font-size:0.85rem;
-             color:var(--text-primary);line-height:1.8;"></div>
-        <div style="display:flex;gap:32px;margin-top:14px;padding-top:14px;
-                    border-top:1px solid var(--border);flex-wrap:wrap;">
-          <div>
-            <div style="font-family:var(--font-mono);font-size:0.65rem;
-                        color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;
-                        margin-bottom:4px;">Total Observed Land Area</div>
-            <div id="stat-land-km2" style="font-family:var(--font-display);
-                 font-size:1.1rem;font-weight:600;color:var(--cyan);">—</div>
-          </div>
-          <div>
-            <div style="font-family:var(--font-mono);font-size:0.65rem;
-                        color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;
-                        margin-bottom:4px;">Land with CAPE &gt; 1000 J/kg</div>
-            <div id="stat-cape-land-km2" style="font-family:var(--font-display);
-                 font-size:1.1rem;font-weight:600;color:var(--red);">—</div>
-          </div>
-          <div>
-            <div style="font-family:var(--font-mono);font-size:0.65rem;
-                        color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;
-                        margin-bottom:4px;">Land with LI &lt; &minus;4 K</div>
-            <div id="stat-li-land-km2" style="font-family:var(--font-display);
-                 font-size:1.1rem;font-weight:600;color:var(--amber);">—</div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -1093,8 +1083,7 @@ footer {
       West&ndash;East transect along 37&deg;N
     </h2>
     <p class="muted" style="max-width:700px;line-height:1.7;margin-bottom:24px;">
-      Temperature and water vapor retrieved along the transect described in
-      Goldberg (2026) &mdash; cutting west to east at 37&deg;N from 107&deg;W to 82&deg;W across
+      Temperature and water vapor retrieved along the latitude line 37&deg;N from 107&deg;W to 82&deg;W across
       the cold sector, dryline, warm sector, active convective line, and Ohio Valley
       return-flow region. Vertical axis is pressure (log scale, surface at bottom).
     </p>
@@ -1123,7 +1112,7 @@ footer {
         </div>
         <div style="background:var(--bg-panel);padding:12px 14px;">
           <div class="section-label" style="margin-bottom:4px;color:var(--red);">Zone 3</div>
-          <div style="font-size:0.78rem;color:var(--text-secondary);">Warm Sector<br>Loaded gun<br>LI &lt; &minus;6</div>
+          <div style="font-size:0.78rem;color:var(--text-secondary);">Warm Sector<br>Capped convective environment<br>LI &lt; &minus;6</div>
         </div>
         <div style="background:var(--bg-panel);padding:12px 14px;">
           <div class="section-label" style="margin-bottom:4px;color:#8888ff;">Zone 4</div>
@@ -1283,7 +1272,7 @@ const INDEX_META = {
     name: 'CIN', unit: 'J/kg', mean: '—', color: 'cyan',
     desc: 'Convective Inhibition. Moderate CIN (−50 to −200) caps instability until release.',
     threshold: -200, max: 0, warn: -50, severe: -200, invert: true,
-    interp: 'Strong CIN cap (< −200 J/kg) over the Texas panhandle / western Oklahoma — the classic "loaded gun" sounding. Convection held in check until the dryline triggered release.'
+    interp: 'Strong CIN cap (< −200 J/kg) over the Texas panhandle / western Oklahoma — the classic "capped convective environment" sounding. Convection held in check until the dryline triggered release.'
   },
   TPW:  {
     name: 'Total Precip. Water', unit: 'mm', mean: '20.4', color: 'cyan',
@@ -1452,7 +1441,7 @@ function buildAlertThresholds(stats) {
       levels: [
         { thresh: -25,  pctKey: 'CIN_lt-25',  desc: 'Weak cap',                  color: '#d0e8f7' },
         { thresh: -100, pctKey: 'CIN_lt-100', desc: 'Moderate cap',              color: 'var(--amber)' },
-        { thresh: -200, pctKey: 'CIN_lt-200', desc: 'Loaded gun cap',            color: 'var(--red)' },
+        { thresh: -200, pctKey: 'CIN_lt-200', desc: 'Capped convective environment',            color: 'var(--red)' },
       ]},
     { key: 'TPW',  label: 'Precipitable Water', unit: 'mm',   invert: false,
       levels: [
@@ -1541,30 +1530,16 @@ async function loadStats() {
     const fmtPct  = v => v !== undefined ? v.toFixed(1) + '%' : '—';
     const fmtKm2  = v => v !== undefined ? Math.round(v).toLocaleString() + ' km²' : '—';
 
-    // Hero stats — km² for top two, % for bottom two
-    if (el('stat-CAPE-km2')) el('stat-CAPE-km2').textContent = fmtKm2(km2['CAPE_gt1000']);
-    if (el('stat-LI-km2'))   el('stat-LI-km2').textContent   = fmtKm2(km2['LI_lt-4']);
-    if (el('stat-TT-pct'))   el('stat-TT-pct').textContent   = fmtPct(exc['TT_gt50']);
-    if (el('stat-LI-pct'))   el('stat-LI-pct').textContent   = fmtPct(exc['LI_lt-4']);
-    if (el('stat-fovs'))     el('stat-fovs').textContent     = (stats.n_fovs || 10680).toLocaleString();
+    // Hero stats — FOVs first, then km² thresholds
+    if (el('stat-fovs'))      el('stat-fovs').textContent      = (stats.n_fovs || 10680).toLocaleString();
+    if (el('stat-CAPE-km2'))  el('stat-CAPE-km2').textContent  = fmtKm2(km2['CAPE_gt1000']);
+    if (el('stat-LI6-km2'))   el('stat-LI6-km2').textContent   = fmtKm2(km2['LI_lt-6']);
+    if (el('stat-TT55-km2'))  el('stat-TT55-km2').textContent  = fmtKm2(km2['TT_gt55']);
 
     // Peak CAPE in event cards
     if (el('stat-CAPE-peak') && stats.peaks && stats.peaks.CAPE)
       el('stat-CAPE-peak').textContent = '>' + Math.round(stats.peaks.CAPE).toLocaleString();
 
-    // States affected panel
-    if (stats.states_affected && stats.states_affected.length > 0) {
-      const wrap = el('stat-states-wrap');
-      if (wrap) wrap.style.display = 'block';
-      const statesEl = el('stat-states');
-      if (statesEl) statesEl.textContent = stats.states_affected.join(' · ');
-      if (el('stat-land-km2'))
-        el('stat-land-km2').textContent = fmtKm2(stats.total_land_km2);
-      if (el('stat-cape-land-km2'))
-        el('stat-cape-land-km2').textContent = fmtKm2(km2['CAPE_gt1000']);
-      if (el('stat-li-land-km2'))
-        el('stat-li-land-km2').textContent = fmtKm2(km2['LI_lt-4']);
-    }
 
     // Update INDEX_META means/peaks for index cards
     if (stats.means) {
